@@ -19,7 +19,8 @@ public class HighscoreManager {
                     2. Highscores anzeigen
                     3. Highscores zurücksetzen
                     4. User anzeigen
-                    5. Beenden
+                    5. Höchste Scores/Spieler anzeigen
+                    6. Beenden
                     """);
             while (true) {
                 try {
@@ -51,6 +52,10 @@ public class HighscoreManager {
                     System.out.println(manager.getUniquePlayerNames());
                     break;
                 case 5:
+                    System.out.println("--- Höchste Scores pro Spieler ---");
+                    System.out.println(manager.getHighestScoresPerPlayer());
+                    break;
+                case 6:
                     isLoopTrue = false;
             }
         }
@@ -73,40 +78,10 @@ public class HighscoreManager {
     }
 
     public void displayHighscores() {
-        File file = new File(FILENAME);
 
-        if (!file.exists() || file.length() == 0) {
-            System.out.println("Noch keine Highscores vorhanden.");
-            return;
-        }
+        List<HighscoreEntry> highscores = readAllHighscoresFromFile();
 
         System.out.println("\n--- Aktuelle Highscores ---");
-
-        List<HighscoreEntry> highscores = new ArrayList<>();
-        try (
-                FileReader fileReader = new FileReader(FILENAME);
-                BufferedReader reader = new BufferedReader(fileReader)
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-
-                if (parts.length == 2) {
-                    try {
-                        String playerName = parts[0];
-                        int score = Integer.parseInt(parts[1]);
-                        HighscoreEntry newHighScore = new HighscoreEntry(playerName, score);
-                        highscores.add(newHighScore);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Fehler: Ungültiger Score in Zeile übersprungen: " + line + " (" + e.getMessage() + ")");
-                    }
-                } else {
-                    System.out.println("Fehler: Ungültiger Highscore-Eintrag übersprungen: " + line);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Fehler beim Lesen der Highscores: " + e.getMessage());
-        }
 
         if (highscores.isEmpty()) {
             System.out.println("Keine gültigen Highscores zum Anzeigen gefunden.");
@@ -138,28 +113,70 @@ public class HighscoreManager {
 
     public Set<String> getUniquePlayerNames() {
         Set<String> uniqueEntries = new HashSet<>();
-        List<String> allFileLines = new ArrayList<>();
+        List<HighscoreEntry> allHighScores = readAllHighscoresFromFile();
 
+        for (HighscoreEntry entry : allHighScores) {
+            uniqueEntries.add(entry.player());
+        }
+        return uniqueEntries;
+    }
+
+    public Map<String, Integer> getHighestScoresPerPlayer() {
+        Map<String, Integer> highestScores = new HashMap<>();
+        List<HighscoreEntry> allHighScores = readAllHighscoresFromFile();
+
+        for (HighscoreEntry entry : allHighScores) {
+            String playerName = entry.player();
+            int currentScore = entry.score();
+
+            if (!highestScores.containsKey(entry.player())) {
+                highestScores.put(entry.player(), entry.score());
+            } else {
+                int storedHighScore = highestScores.get(entry.player());
+
+                if (currentScore > storedHighScore) {
+                    highestScores.replace(playerName, currentScore);
+                }
+            }
+        }
+        return highestScores;
+    }
+
+    private List<HighscoreEntry> readAllHighscoresFromFile() {
+        List<HighscoreEntry> highscores = new ArrayList<>();
         Path highscorePath = Path.of(FILENAME);
+
 
         if (!Files.exists(highscorePath)) {
             System.out.println("Es gibt noch keine eingetragenen Highscores!");
-            return uniqueEntries;
+            return highscores;
         }
 
         try {
-            allFileLines = Files.readAllLines(highscorePath);
+            List<String> allFileLines = Files.readAllLines(highscorePath);
+
+
+            for (String line : allFileLines) {
+                String[] parts = line.split(",");
+
+                if (parts.length == 2) {
+                    try {
+                        String playerName = parts[0];
+                        int score = Integer.parseInt(parts[1]);
+                        HighscoreEntry newHighScore = new HighscoreEntry(playerName, score);
+                        highscores.add(newHighScore);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Fehler: Ungültiger Score in Zeile übersprungen: " + line + " (" + e.getMessage() + ")");
+                    }
+                } else {
+                    System.err.println("Fehler: Ungültiger Highscore-Eintrag übersprungen: " + line);
+                }
+            }
         } catch (IOException e) {
-            System.err.println("Die Highscore-Datei konnte nicht gefunden werden!");
+            System.err.println("Fehler beim Lesen der Highscore-Datei: " + e.getMessage());
+
         }
 
-        for (String fileLine : allFileLines) {
-            String[] parts = fileLine.split(",");
-            if (parts.length == 2) {
-                    String playerName = parts[0];
-                    uniqueEntries.add(playerName);
-            }
-        }
-        return uniqueEntries;
+        return highscores;
     }
 }
