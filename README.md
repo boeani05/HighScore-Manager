@@ -15,6 +15,7 @@ Dieses Projekt entstand als praktischer Teil des Java-Roadmaps von roadmap.sh. E
 *   **Highscores anzeigen:** Liest alle Highscores aus der `highscores.txt`-Datei, parst sie in `HighscoreEntry`-Objekte, sammelt sie in einer `ArrayList` und gibt sie anschließend formatiert in der Konsole aus.
 *   **Highscores zurücksetzen:** Löscht die `highscores.txt`-Datei, um die gesamte Highscore-Liste zu leeren.
 *   **Einzigartige Spieler anzeigen:** Eine dedizierte Funktion, die alle Highscores aus der `highscores.txt`-Datei liest und daraus ein `Set` mit allen **einzigartigen Spielernamen** extrahiert und zurückgibt.
+*   **Höchste Scores pro Spieler anzeigen:** Zeigt den jeweils höchsten Score eines Spielers an. Jeder Spieler wird nur **einmal** angezeigt; es wird immer nur der höchste Wert angezeigt.
 *   **Interaktives Konsolenmenü:** Eine benutzerfreundliche Menüführung über die Kommandozeile zur Auswahl der verschiedenen Aktionen.
 *   **Robuste Fehlerbehandlung:** Fängt `IOException` bei Dateizugriffen, `InputMismatchException` bei fehlerhaften Benutzereingaben und `NumberFormatException` beim Parsen von Scores ab, um die Anwendung stabil und benutzerfreundlich zu halten.
 ## Verwendete Technologien und Konzepte
@@ -29,9 +30,7 @@ Dieses Projekt entstand als praktischer Teil des Java-Roadmaps von roadmap.sh. E
     *   **`HashSet<String>`:** Eine Collection, die ausschließlich einzigartige `String`-Objekte speichert (z.B. für `getUniquePlayerNames()`).
     *   **`List` und `Set` Interfaces:** Verwendung der Interfaces für die Typdeklaration (`List<...>`, `Set<...>`) für mehr Flexibilität und Best Practices.
 *   **Dateioperationen (File I/O):**
-    *   **Traditionell (`java.io`):** `FileWriter`, `BufferedWriter` (für `addHighscore()`), `FileReader`, `BufferedReader` (für `displayHighscores()`), `File` Klasse (`delete()`).
     *   **Modern (`java.nio.file`):** `Path`, `Files.exists()`, `Files.readAllLines()` (für `getUniquePlayerNames()`) für einen moderneren und oft effizienteren Dateizugriff.
-    *   **`try-with-resources`:** Für sicheres und automatisches Schließen von Datei-Ressourcen.
 *   **Exception Handling:** Umgang mit `IOException`, `InputMismatchException`, `NumberFormatException` zur Erhöhung der Anwendungsstabilität.
 *   **`java.util.Scanner`:** Für die Verarbeitung von Benutzereingaben in der Konsole.
 *   **Refactoring:** Prozess der Code-Verbesserung und Integration neuer Konzepte in bestehende Strukturen.
@@ -53,3 +52,12 @@ Dieses Projekt entstand als praktischer Teil des Java-Roadmaps von roadmap.sh. E
 *   **Datenpersistent mit JSON/CSV:** Speicherung der Highscores in einem strukturierteren Format (z.B. JSON oder CSV) anstelle von einfachen Textzeilen.
 *   **Grafische Benutzeroberfläche (GUI):** Erweiterung des Projekts um eine visuelle Schnittstelle (z.B. mit JavaFX oder Swing).
 *   **Unit Tests:** Schreiben von Tests für die `HighscoreManager`-Methoden, um die Korrektheit der Logik zu gewährleisten.
+
+### **Aktualisierung: Umfassendes Code-Refactoring und Logik-Optimierung**
+
+Dieses Update konzentriert sich auf die Verbesserung der Code-Qualität, Wartbarkeit und Robustheit des Highscore Managers:
+
+*   **Zentralisierte Highscore-Datenlesung:** Eine neue private Hilfsmethode (`readAllHighscoresFromFile()`) wurde implementiert, die das gesamte Lesen und Parsen der `highscores.txt`-Datei kapselt. Dies eliminiert redundanten Code, nutzt die moderne `java.nio.file`-API (`Path`, `Files.readAllLines`) konsequent und zentralisiert die Fehlerbehandlung für Dateizugriffe und Score-Parsing.
+*   **Verbesserte Modulbauweise:** Alle datenanalysierenden Methoden (`displayHighscores()`, `getUniquePlayerNames()`, `getHighestScoresPerPlayer()`) nutzen nun diese zentrale Methode, was ihre Lesbarkeit und Wartbarkeit erheblich steigert.
+*   **Fehlerkorrektur in der Highscore-Analyse:** Die Logik zur Ermittlung der "Höchsten Scores pro Spieler" (`getHighestScoresPerPlayer()`) wurde präzise korrigiert. Die Methode stellt nun sicher, dass immer der absolut höchste Score eines Spielers korrekt erfasst und gespeichert wird, auch wenn spätere Einträge niedrigere Punktzahlen aufweisen.
+*   **Allgemeine Code-Sauberkeit:** Durch die Anwendung des DRY-Prinzips (Don't Repeat Yourself) und die Verbesserung der Trennung von Verantwortlichkeiten ist der Code nun professioneller und zukunftssicherer.
