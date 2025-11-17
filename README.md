@@ -28,7 +28,15 @@ Dieses Projekt entstand als praktischer Teil des Java-Roadmaps von roadmap.sh. E
 *   **Java Collections Framework:**
     *   **`ArrayList<HighscoreEntry>`:** Dynamische, typisierte Liste zum Speichern und Verwalten von `HighscoreEntry`-Objekten (z.B. in `displayHighscores()`).
     *   **`HashSet<String>`:** Eine Collection, die ausschließlich einzigartige `String`-Objekte speichert (z.B. für `getUniquePlayerNames()`).
+    *   **`HashMap<String, Integer>`:** Ungespeicherte Map für Schlüssel-Wert-Paare, verwendet für effiziente Abrufe und die Speicherung der höchsten Scores pro Spieler.
+    *   **`LinkedHashMap<String, String>`:** Eine Map, die die **Einfügereihenfolge** ihrer Elemente beibehält, demonstriert in den Übungen zum Spielerlogbuch.
+    *   **`SortedMap` Interface und `TreeMap<Key, Value>`:**
+        *   `SortedMap` garantiert, dass die Schlüssel intern sortiert sind, wodurch eine Iteration in sortierter Reihenfolge möglich ist.
+        *   `TreeMap` ist die primäre Implementierung, die Schlüssel entweder nach ihrer natürlichen Ordnung oder mithilfe eines benutzerdefinierten `Comparator`s sortiert.
+        *   Angewendet für alphabetisch sortierte Spielerlisten und die Demonstration von `Comparator`-basierter Sortierung (z.B. umgekehrte alphabetische Reihenfolge).
+        *   Spezifische Navigationsmethoden wie `firstKey()`, `lastKey()`, `descendingKeySet()`, `headMap()`, `tailMap()` und `subMap()` wurden ebenfalls erkundet, um sortierte Teilbereiche der Map zu extrahieren.
     *   **`List` und `Set` Interfaces:** Verwendung der Interfaces für die Typdeklaration (`List<...>`, `Set<...>`) für mehr Flexibilität und Best Practices.
+    *   **Funktionale Map-Operationen:** Einsatz moderner Java 8+ Methoden wie `forEach()`, `computeIfAbsent()` und `merge()` für effiziente und expressive Map-Interaktionen.
 *   **Dateioperationen (File I/O):**
     *   **Modern (`java.nio.file`):** `Path`, `Files.exists()`, `Files.readAllLines()` (für `getUniquePlayerNames()`) für einen moderneren und oft effizienteren Dateizugriff.
 *   **Exception Handling:** Umgang mit `IOException`, `InputMismatchException`, `NumberFormatException` zur Erhöhung der Anwendungsstabilität.
@@ -61,3 +69,4 @@ Dieses Update konzentriert sich auf die Verbesserung der Code-Qualität, Wartbar
 *   **Verbesserte Modulbauweise:** Alle datenanalysierenden Methoden (`displayHighscores()`, `getUniquePlayerNames()`, `getHighestScoresPerPlayer()`) nutzen nun diese zentrale Methode, was ihre Lesbarkeit und Wartbarkeit erheblich steigert.
 *   **Fehlerkorrektur in der Highscore-Analyse:** Die Logik zur Ermittlung der "Höchsten Scores pro Spieler" (`getHighestScoresPerPlayer()`) wurde präzise korrigiert. Die Methode stellt nun sicher, dass immer der absolut höchste Score eines Spielers korrekt erfasst und gespeichert wird, auch wenn spätere Einträge niedrigere Punktzahlen aufweisen.
 *   **Allgemeine Code-Sauberkeit:** Durch die Anwendung des DRY-Prinzips (Don't Repeat Yourself) und die Verbesserung der Trennung von Verantwortlichkeiten ist der Code nun professioneller und zukunftssicherer.
+*   **Alphabetisch sortierte Spieleranzeige:** Eine neue Methode (`getPlayersSortedByName()`) erstellt eine Rangliste aller Spieler, die alphabetisch nach ihrem Namen sortiert ist und dabei nur den höchsten Score jedes Spielers berücksichtigt. Diese Liste wird über eine neue Menüoption abrufbar gemacht.
