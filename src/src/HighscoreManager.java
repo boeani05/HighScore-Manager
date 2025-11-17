@@ -20,7 +20,8 @@ public class HighscoreManager {
                     3. Highscores zurücksetzen
                     4. User anzeigen
                     5. Höchste Scores/Spieler anzeigen
-                    6. Beenden
+                    6. Alphabetisch sortierte Spieler anzeigen
+                    7. Beenden
                     """);
             while (true) {
                 try {
@@ -56,6 +57,10 @@ public class HighscoreManager {
                     System.out.println(manager.getHighestScoresPerPlayer());
                     break;
                 case 6:
+                    System.out.println("\n--- Alphabetisch sortierte Spieler ---");
+                    System.out.println(manager.getPlayersSortedByName());
+                    break;
+                case 7:
                     isLoopTrue = false;
             }
         }
@@ -178,5 +183,23 @@ public class HighscoreManager {
         }
 
         return highscores;
+    }
+
+    public SortedMap<String, Integer> getPlayersSortedByName() {
+        List<HighscoreEntry> entries = readAllHighscoresFromFile();
+
+        SortedMap<String, Integer> sortedPlayers = new TreeMap<>();
+
+        for (HighscoreEntry entry : entries) {
+            String playerName = entry.player();
+            int score = entry.score();
+
+            if (!sortedPlayers.containsKey(playerName)) {
+                sortedPlayers.put(playerName, score);
+            } else if (score > sortedPlayers.get(playerName)) {
+                sortedPlayers.replace(playerName, score);
+            }
+        }
+        return sortedPlayers;
     }
 }
